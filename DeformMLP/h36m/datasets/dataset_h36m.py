@@ -3,7 +3,7 @@ from torch.utils.data import Dataset
 import numpy as np
 from h5py import File
 import scipy.io as sio
-import h36m.utils.data_utils as data_utils
+import utils.data_utils as data_utils
 from matplotlib import pyplot as plt
 import torch
 

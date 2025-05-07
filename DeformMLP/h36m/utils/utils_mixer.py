@@ -1,7 +1,7 @@
 import numpy as np
 import random
 from random import randint
-from h36m.utils.data_utils import rotmat2euler_torch, expmap2rotmat_torch
+from utils.data_utils import rotmat2euler_torch, expmap2rotmat_torch
 
 import torch
 import torch.nn as nn

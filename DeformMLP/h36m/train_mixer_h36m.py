@@ -2,14 +2,14 @@ import torch
 import os
 from datasets.dataset_h36m import H36M_Dataset
 from datasets.dataset_h36m_ang import H36M_Dataset_Angle
-from h36m.utils.data_utils import define_actions
+from utils.data_utils import define_actions
 from torch.utils.data import DataLoader
 from mlp_h36m import MorphMLP
 
 import torch.optim as optim
 import numpy as np
 import argparse
-from h36m.utils.utils_mixer import delta_2_gt, mpjpe_error, euler_error
+from utils.utils_mixer import delta_2_gt, mpjpe_error, euler_error
 from tqdm import tqdm
 from torch.utils.tensorboard import SummaryWriter
 
@@ -18,10 +18,10 @@ def get_log_dir(out_dir):
     dirs = [x[0] for x in os.walk(out_dir)]
     if len(dirs ) < 2:
         log_dir = os.path.join(out_dir, 'exp0')
-        os.mkdir(log_dir)
+        os.makedirs(log_dir, exist_ok=True)
     else:
         log_dir = os.path.join(out_dir, 'exp%i'%(len(dirs)-1))
-        os.mkdir(log_dir)
+        os.makedirs(log_dir, exist_ok=True)
 
     return log_dir
 
