@@ -467,12 +467,13 @@ class MorphMLP(nn.Module):
         return x
 
     def forward(self, x):  # 224,224,T,3
-        x = x.reshape(-1, 10, 22, 3)#B,T,J,C
+        x = x.float()
+        x = x.reshape(x.shape[0], x.shape[1], -1, 3)#B,T,J,C
         x = x.permute(0, 3, 1, 2)
         x = self.forward_features(x)
-        x = self.norm(x)#B,10,22,110
+        x = self.norm(x)
         x = self.fc_out(x)
-        x = self.conv_out(x.reshape(-1, 10, 66))
+        x = self.conv_out(x.reshape(x.shape[0], x.shape[1], -1))
 
         return x
 
