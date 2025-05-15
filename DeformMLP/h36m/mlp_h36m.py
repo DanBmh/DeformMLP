@@ -337,14 +337,24 @@ class MorphMLP(nn.Module):
         in_chans = 3
         layers = [1, 1, 1, 1]
         transitions = [False, False, False, False]
+
+        print("Depending on the input length, you may need to change some parameters")
+        print("File path: ", __file__)
+
         segment_dim_j = [22, 22, 22, 22]
         segment_dim_t = [10, 10, 10, 10]
-        mlp_ratios = [3, 3, 3, 3]
         mlp_dim_t = [11, 11, 11, 11]
         mlp_dim_j = [5, 5, 5, 5]
-        reduced_dim = [2, 2, 2, 2]
-        #embed_dims = [110, 220, 220, 110]
         embed_dims = [110, 110, 110, 110]
+
+        # segment_dim_j = [22, 22, 22, 22]
+        # segment_dim_t = [50, 50, 50, 50]
+        # mlp_dim_t = [11, 11, 11, 11]
+        # mlp_dim_j = [25, 25, 25, 25]
+        # embed_dims = [550, 550, 550, 550]
+
+        mlp_ratios = [3, 3, 3, 3]
+        reduced_dim = [2, 2, 2, 2]
         patch_size = 7
         qkv_bias = False
         qk_scale = None
@@ -420,8 +430,8 @@ class MorphMLP(nn.Module):
 
         # Classifier head
         self.fc_out = nn.Linear(embed_dims[-1], 3)
-        self.conv_out = nn.Conv1d(10, 25, 1, stride=1)
-        self.conv2d_out = nn.Conv2d(10, self.pre_len, 1, stride=1)
+        self.conv_out = nn.Conv1d(segment_dim_t[0], 25, 1, stride=1)
+        self.conv2d_out = nn.Conv2d(segment_dim_t[0], self.pre_len, 1, stride=1)
         self.apply(self._init_weights)
         for name, p in self.named_parameters():
             # fill proj weight with 1 here to improve training dynamics. Otherwise temporal attention inputs

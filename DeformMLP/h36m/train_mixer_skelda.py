@@ -368,6 +368,6 @@ if __name__ == '__main__':
     print('total number of parameters of the network is: ' +
           str(sum(p.numel() for p in model.parameters() if p.requires_grad)))
 
-    model_name = 'h36_3d_'+str(args.output_n)+'frames_ckpt'
+    model_name = 'h36_3d_'+str(args.input_n)+'_'+str(args.output_n)+'frames_ckpt'
 
     train(model, model_name, args)
