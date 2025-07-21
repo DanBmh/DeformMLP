@@ -1,3 +1,4 @@
+import copy
 import sys
 import time
 import torch
@@ -23,8 +24,6 @@ sys.path.append("/PoseForecasters/")
 import utils_pipeline
 
 datamode = "gt-gt"
-# datamode = "pred-gt"
-# datamode = "pred-pred"
 jloss_timestep = 0
 
 sconfig = {
@@ -50,7 +49,7 @@ sconfig = {
 }
 
 dataset_eval_test = "/datasets/preprocessed/human36m/{}_forecast_rpt.json"
-dataset_eval_test = dataset_eval_test.format("test")
+# dataset_eval_test = "/datasets/preprocessed/cmu-mocap/{}.json"
 
 
 # ==================================================================================================
@@ -87,7 +86,12 @@ def test_pretrained(model, args):
     sconfig["output_n"] = args.output_n
 
     # Load preprocessed datasets
-    dataset_test, dlen = utils_pipeline.load_dataset(dataset_eval_test, "test", sconfig)
+    cfg = copy.deepcopy(sconfig)
+    if "mocap" in dataset_eval_test:
+        cfg["select_joints"][cfg["select_joints"].index("nose")] = "head_upper"
+    dataset_test, dlen_test = utils_pipeline.load_dataset(
+        dataset_eval_test, "test", cfg
+    )
     dataset_test = dataset_test["sequences"]
     label_gen_test = utils_pipeline.create_labels_generator(dataset_test, sconfig)
 
@@ -98,7 +102,7 @@ def test_pretrained(model, args):
     with torch.no_grad():
         nbatch = 1
 
-        for batch in tqdm.tqdm(label_gen_test, total=dlen):
+        for batch in tqdm.tqdm(label_gen_test, total=dlen_test):
             if nbatch == 1:
                 batch = [batch]
 

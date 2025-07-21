@@ -1,3 +1,4 @@
+import copy
 import sys
 import torch
 import os
@@ -46,9 +47,11 @@ sconfig = {
 
 datasets_train = [
     "/datasets/preprocessed/human36m/train_forecast_rpt.json",
+    # "/datasets/preprocessed/cmu-mocap/train.json"
 ]
 
 dataset_eval_test = "/datasets/preprocessed/human36m/{}_forecast_rpt.json"
+# dataset_eval_test = "/datasets/preprocessed/cmu-mocap/{}.json"
 
 # ==================================================================================================
 
@@ -86,11 +89,19 @@ def train(model, model_name, args):
     print("Loading datasets ...")
     dataset_train, dlen_train = [], 0
     for dp in datasets_train:
-        ds, dlen = utils_pipeline.load_dataset(dp, "train", sconfig)
+        cfg = copy.deepcopy(sconfig)
+        if "mocap" in dp:
+            cfg["select_joints"][cfg["select_joints"].index("nose")] = "head_upper"
+
+        ds, dlen = utils_pipeline.load_dataset(dp, "train", cfg)
         dataset_train.extend(ds["sequences"])
         dlen_train += dlen
+    esplit = "test" if "mocap" in dataset_eval_test else "eval"
+    cfg = copy.deepcopy(sconfig)
+    if "mocap" in dataset_eval_test:
+        cfg["select_joints"][cfg["select_joints"].index("nose")] = "head_upper"
     dataset_eval, dlen_eval = utils_pipeline.load_dataset(
-        dataset_eval_test, "eval", sconfig
+        dataset_eval_test, esplit, cfg
     )
     dataset_eval = dataset_eval["sequences"]
 
